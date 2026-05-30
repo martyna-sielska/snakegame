@@ -33,6 +33,7 @@ let running = false;
 let paused = false;
 let lastTime = 0;
 let stepInterval = 1000 / Number(speedInput.value);
+let touchStart = null;
 
 function resetGame() {
   gridSize = Number(sizeInput.value);
@@ -257,6 +258,52 @@ function handleKey(event) {
   }
 }
 
+function handleTouchStart(event) {
+  if (event.touches.length !== 1) {
+    return;
+  }
+  const touch = event.touches[0];
+  touchStart = { x: touch.clientX, y: touch.clientY };
+  event.preventDefault();
+  if (!running) {
+    resetGame();
+    startGame();
+  }
+}
+
+function handleTouchMove(event) {
+  if (running) {
+    event.preventDefault();
+  }
+}
+
+function handleTouchEnd(event) {
+  if (!touchStart) {
+    return;
+  }
+  const touch = event.changedTouches[0];
+  const dx = touch.clientX - touchStart.x;
+  const dy = touch.clientY - touchStart.y;
+  const absX = Math.abs(dx);
+  const absY = Math.abs(dy);
+  const threshold = 12;
+  touchStart = null;
+  event.preventDefault();
+
+  if (absX < threshold && absY < threshold) {
+    if (running) {
+      pauseGame();
+    }
+    return;
+  }
+
+  if (absX > absY) {
+    handleDirection(dx > 0 ? 1 : -1, 0);
+  } else {
+    handleDirection(0, dy > 0 ? 1 : -1);
+  }
+}
+
 function updateSpeed() {
   stepInterval = 1000 / Number(speedInput.value);
 }
@@ -293,6 +340,9 @@ sizeInput.addEventListener("input", () => {
 });
 
 document.addEventListener("keydown", handleKey);
+board.addEventListener("touchstart", handleTouchStart, { passive: false });
+board.addEventListener("touchmove", handleTouchMove, { passive: false });
+board.addEventListener("touchend", handleTouchEnd, { passive: false });
 
 restoreBest();
 resetGame();
