@@ -28,6 +28,7 @@ body {
   align-items: center;
   justify-content: center;
   padding: 24px;
+  overscroll-behavior: none;
 }
 
 .app {
@@ -104,6 +105,7 @@ body {
   border: 2px solid var(--pink-300);
   background: linear-gradient(145deg, #ffd2ea, #ff9ccc);
   box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.25);
+  touch-action: none;
 }
 
 #board {
@@ -112,6 +114,7 @@ body {
   max-width: 520px;
   aspect-ratio: 1 / 1;
   background: linear-gradient(145deg, #ffb6d8, #ff7dbb);
+  touch-action: none;
 }
 
 .overlay {

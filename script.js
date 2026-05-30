@@ -1,5 +1,6 @@
 const board = document.getElementById("board");
 const ctx = board.getContext("2d");
+const boardWrap = document.querySelector(".board-wrap");
 const scoreEl = document.getElementById("score");
 const bestEl = document.getElementById("best");
 const overlay = document.getElementById("overlay");
@@ -264,7 +265,9 @@ function handleTouchStart(event) {
   }
   const touch = event.touches[0];
   touchStart = { x: touch.clientX, y: touch.clientY };
-  event.preventDefault();
+  if (event.cancelable) {
+    event.preventDefault();
+  }
   if (!running) {
     resetGame();
     startGame();
@@ -273,7 +276,17 @@ function handleTouchStart(event) {
 
 function handleTouchMove(event) {
   if (running) {
-    event.preventDefault();
+    if (event.cancelable) {
+      event.preventDefault();
+    }
+  }
+}
+
+function handleGlobalTouchMove(event) {
+  if (running) {
+    if (event.cancelable) {
+      event.preventDefault();
+    }
   }
 }
 
@@ -288,7 +301,9 @@ function handleTouchEnd(event) {
   const absY = Math.abs(dy);
   const threshold = 12;
   touchStart = null;
-  event.preventDefault();
+  if (event.cancelable) {
+    event.preventDefault();
+  }
 
   if (absX < threshold && absY < threshold) {
     if (running) {
@@ -340,9 +355,10 @@ sizeInput.addEventListener("input", () => {
 });
 
 document.addEventListener("keydown", handleKey);
-board.addEventListener("touchstart", handleTouchStart, { passive: false });
-board.addEventListener("touchmove", handleTouchMove, { passive: false });
-board.addEventListener("touchend", handleTouchEnd, { passive: false });
+document.addEventListener("touchmove", handleGlobalTouchMove, { passive: false });
+boardWrap.addEventListener("touchstart", handleTouchStart, { passive: false });
+boardWrap.addEventListener("touchmove", handleTouchMove, { passive: false });
+boardWrap.addEventListener("touchend", handleTouchEnd, { passive: false });
 
 restoreBest();
 resetGame();
